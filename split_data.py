@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import StratifiedShuffleSplit
 
 # read in data 
-data = pd.read_csv(r"C:\Users\orion\Downloads\Data Carrard et al. 2022 MedTeach.csv")
+data = pd.read_csv(r".\Data Carrard et al. 2022 MedTeach.csv")
 print(data)
 
 #plot histogram of data, mbi_ex
@@ -27,11 +28,11 @@ plt.ylabel('Frequency')
 
 
 #split half of the data randomly into training and validation sets
-train = data.sample(frac=0.5, random_state=1)
-val = data.loc[~data.index.isin(train.index)]
+split = StratifiedShuffleSplit(n_splits=1, test_size=0.5, random_state=42)
+for train_index, val_index in split.split(data, data["mbi_ex"]):
+    train = data.loc[train_index]
+    val = data.loc[val_index]
 
-print(len(train))
-print(len(val))
-
-train.to_csv(r"C:\Users\orion\Downloads\MedTeach_train.csv", index=False)
-val.to_csv(r"C:\Users\orion\Downloads\MedTeach_val.csv", index=False)
+#save training and validation sets to csv files
+train.to_csv(r".\MedTeach_train.csv", index=False)
+val.to_csv(r".\MedTeach_val.csv", index=False)
